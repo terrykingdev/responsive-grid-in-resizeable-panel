@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link href="style.css" rel="stylesheet" type="text/css" ></link>
+<script>
+function start(){
+
+	let defaultWidth=260;
+	let globalX,globalY
+	let startResizerX,startPanelWidth
+	let dragResizer=false
+
+	let container=document.getElementById("container")
+	let resizer=document.getElementById("resizer")
+	let panel=document.getElementById("panel")
+	"mousedown,touchstart".split(",").forEach(function(e){
+      resizer.addEventListener(e,resizerMouseDown,false)
+		})
+	"mousemove,touchmove".split(",").forEach(function(e){
+		document.body.addEventListener(e,globalMouseMove,false)
+	})
+	"mouseup,touchend".split(",").forEach(function(e){
+		document.body.addEventListener(e,globalMouseUp,false)
+	})
+
+	setWidth(defaultWidth)
+
+	document.getElementById("btn1").addEventListener("click",function (){applyTheme('light')},false)
+	document.getElementById("btn2").addEventListener("click",function (){applyTheme('mid')},false)
+	document.getElementById("btn3").addEventListener("click",function (){applyTheme('dark')},false)
+	document.getElementById("btn4").addEventListener("click",function (){setWidth('200')},false)
+	document.getElementById("btn5").addEventListener("click",function (){setWidth('250')},false)
+	document.getElementById("btn6").addEventListener("click",function (){setWidth('300')},false)
+	document.getElementById("btn7").addEventListener("click",function (){setWidth('350')},false)
+
+	function resizerMouseDown(e){
+		startResizerX = globalX
+		startPanelWidth = panel.clientWidth
+		dragResizer=true
+		document.body.style.cursor='w-resize'
+		e.preventDefault()
+	}
+
+	function globalMouseMove(e){
+		globalX=e.pageX
+		globalY=e.pageY
+		if (!globalX){
+			globalX=e.touches[0].pageX
+			globalY=e.touches[0].pageY
+		}
+		console.log(globalX,globalY,dragResizer)
+		if (dragResizer){
+			let dx=globalX-startResizerX
+			let newWidth=Math.max(200,Math.min(500,startPanelWidth+dx))
+			setWidth(newWidth)
+		}
+	}
+	function setWidth(w){
+		panel.style.width=`${w}px`
+		panel.style['min-width']=`${w}px`
+		applyPanelStyle()
+	}
+	function applyPanelStyle(){
+		let style
+		let width=panel.clientWidth
+		if (width<=200) style=['sm']
+		else if (width<=300) style=['sm','md']
+		else style=['sm','md','lg']
+		panel.classList.remove('sm','md','lg')
+		panel.classList.add(...style)
+	}
+
+	function globalMouseUp(e){
+		if (dragResizer){
+			document.body.style.cursor='default'
+			dragResizer=false
+		}
+	}
+
+	function applyTheme(theme){
+		console.log(theme)
+		container.classList.remove('lightpanel','midpanel','darkpanel')
+		container.classList.add(`${theme}panel`)
+	}
+}
+</script>
+</head>
+<body onload="start()">
+	<div id="container" class="container midpanel">
+		<div id="panel" class="panel gridwrapper">
+			<div class="header">Properties</div>
+			<div class="row col-4"><div class="label">Button</div><button class="bl br" id="btn1">Light</button></div>
+			<div class="row col-4 lg-2"><div class="label">Button</div><button class="bl br" id="btn2">Medium</button></div>
+			<div class="row col-4 lg-2"><div class="label">Button</div><button class="bl br" id="btn3">Dark</button></div>
+			<div class="row col-4"><div class="subheader">Button Collection</div></div>
+			<div class="row col-4 lg-1 md-2"><button class="bl br" id="btn4">200px</button></div>
+			<div class="row col-4 lg-1 md-2"><button class="bl br" id="btn5">250px</button></div>
+			<div class="row col-4 lg-1 md-2"><button class="bl br" id="btn6">300px</button></div>
+			<div class="row col-4 lg-1 md-2"><button class="bl br" id="btn7">350px</button></div>
+			<div class="row col-4"><div class="label">Inp/Btn</div><input  class="bl" type="text"><button class="small br">...</button></div>
+			<div class="row col-4"><div class="label">Inp/Label</div><input class="bl" type="text"><div class="info br">px</div></div>
+			<div class="row col-4"><div class="info bl">Input</div><input class="br" type="text"></div>
+			<div class="row col-4 md-2"><div class="label">Checkbox1</div><input checked class="bl br" type="checkbox"></div>
+			<div class="row col-4 md-2"><div class="label">Checkbox2</div><input checked class="bl br" type="checkbox"></div>
+			<div class="row col-4"><div class="label">Select</div>
+				<div class="select-wrapper">
+					<select class="bl br">
+						<option value="option1">Option 1</option>
+						<option value="option2">Option 2</option>
+						<option value="option3">Option 3</option>
+						<option value="option4">Option 4</option>
+						<option value="option5">Option 5</option>
+					</select>
+				</div>
+			</div>
+		</div>
+		<div id="resizer" class="resizer">
+		</div>
+		<div class="maincontent">
+			A 4 column responsive grid, ideal for property panels. Three responsive classes; sm, md & lg are selected based on the width of the panel. Javascript is needed to apply the styles based on the width.
+		</div>			
+		</div>
+
+</div>
+</body>
+</html>
